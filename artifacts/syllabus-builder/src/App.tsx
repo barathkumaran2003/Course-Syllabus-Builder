@@ -9,6 +9,10 @@ import Courses from "./pages/courses";
 import Builder from "./pages/builder";
 import Preview from "./pages/preview";
 import History from "./pages/history";
+import AIGenerator from "./pages/ai-generator";
+import Templates from "./pages/templates";
+import Branding from "./pages/branding";
+import Settings from "./pages/settings";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,6 +29,10 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/courses" component={Courses} />
+      <Route path="/ai-generator" component={AIGenerator} />
+      <Route path="/templates" component={Templates} />
+      <Route path="/branding" component={Branding} />
+      <Route path="/settings" component={Settings} />
       <Route path="/builder/:courseId" component={Builder} />
       <Route path="/preview/:courseId" component={Preview} />
       <Route path="/history/:courseId" component={History} />

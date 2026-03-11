@@ -33,3 +33,11 @@ export interface DashboardStats {
   totalModules: number;
   totalTopics: number;
 }
+
+export interface Branding {
+  instituteName: string;
+  tagline: string;
+  footerText: string;
+  logo: string;
+  theme: string;
+}

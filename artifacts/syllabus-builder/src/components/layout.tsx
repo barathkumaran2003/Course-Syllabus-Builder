@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "wouter";
-import { BookOpen, LayoutDashboard, Library, FileText, Settings, History } from "lucide-react";
+import { BookOpen, LayoutDashboard, Library, FileText, Settings, History, Wand2, LayoutTemplate, Palette, Settings2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
@@ -15,6 +15,10 @@ export function Layout({ children, activeCourseId }: LayoutProps) {
   const mainNav = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Course Library", href: "/courses", icon: Library },
+    { name: "AI Generator", href: "/ai-generator", icon: Wand2 },
+    { name: "Templates", href: "/templates", icon: LayoutTemplate },
+    { name: "Branding", href: "/branding", icon: Palette },
+    { name: "Settings", href: "/settings", icon: Settings2 },
   ];
 
   const courseNav = activeCourseId ? [

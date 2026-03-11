@@ -16,6 +16,15 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **API codegen**: Orval (from OpenAPI spec)
 - **Build**: esbuild (CJS bundle)
 
+## Artifacts
+
+### Professional Course Syllabus Builder (`artifacts/syllabus-builder`)
+Frontend-only React + Vite app (no backend). All data stored in IndexedDB via idb-keyval.
+
+**Pages:** Dashboard, Course Library, Course Builder (drag-and-drop), AI Syllabus Generator, Templates Library (8 prebuilt templates), Institute Branding, Preview & Export (PDF/DOCX/PPTX), Version History, Settings
+
+**Key packages:** @dnd-kit/core, @dnd-kit/sortable, jspdf, jspdf-autotable, docx, pptxgenjs, idb-keyval, framer-motion, date-fns, uuid
+
 ## Structure
 
 ```text

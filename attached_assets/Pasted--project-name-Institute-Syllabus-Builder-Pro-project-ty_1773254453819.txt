@@ -1,0 +1,189 @@
+{
+  "project_name": "Institute Syllabus Builder Pro",
+  "project_type": "Frontend Only Web Application",
+  "description": "A premium syllabus builder designed for software training institutes to create, manage, design, and export professional course syllabi without a backend. The application should allow instructors to create courses, modules, topics, and notes using a drag-and-drop interface, generate AI-powered syllabus suggestions, apply institute branding, and export the final syllabus as PDF, DOCX, or PowerPoint.",
+  
+  "tech_stack": {
+    "framework": "React + Vite",
+    "language": "TypeScript",
+    "styling": "TailwindCSS + Shadcn UI",
+    "icons": "Lucide React",
+    "drag_drop": "dnd-kit",
+    "pdf_generation": "jspdf + jspdf-autotable",
+    "doc_generation": "docx",
+    "ppt_generation": "pptxgenjs",
+    "state_management": "React Context + Zustand",
+    "local_storage": "IndexedDB (primary) with LocalStorage backup",
+    "charts": "Recharts",
+    "ai_engine": "Client-side AI prompt system for syllabus generation"
+  },
+
+  "design_requirements": {
+    "design_style": "Modern SaaS dashboard UI",
+    "theme": "Professional gradient blue-purple theme",
+    "font": "Poppins",
+    "ui_effects": [
+      "Glassmorphism cards",
+      "Smooth hover animations",
+      "Animated buttons",
+      "Fade-in components",
+      "Soft shadows",
+      "Micro interactions"
+    ],
+    "layout": {
+      "sidebar": "Left navigation sidebar",
+      "topbar": "Header with institute logo and profile",
+      "content": "Dashboard cards and builder workspace"
+    }
+  },
+
+  "application_pages": [
+    "Dashboard",
+    "Course Library",
+    "Course Builder",
+    "AI Syllabus Generator",
+    "Templates Library",
+    "Institute Branding",
+    "Preview & Export",
+    "Version History",
+    "Settings"
+  ],
+
+  "core_features": [
+    {
+      "name": "Multiple Courses",
+      "description": "Users can create and manage multiple courses."
+    },
+    {
+      "name": "Modules and Topics",
+      "description": "Each course can contain multiple modules and each module can contain multiple topics and notes."
+    },
+    {
+      "name": "Drag and Drop Builder",
+      "description": "Modules and topics can be reordered using drag and drop."
+    },
+    {
+      "name": "Permanent Local Storage",
+      "description": "All data must be stored locally using IndexedDB so courses remain saved permanently without backend."
+    }
+  ],
+
+  "ai_features": [
+    {
+      "name": "AI Syllabus Generator",
+      "description": "User enters course title and duration. The system automatically generates suggested modules and topics."
+    },
+    {
+      "name": "AI Topic Suggestions",
+      "description": "Suggest additional topics inside modules."
+    },
+    {
+      "name": "Auto Course Outline",
+      "description": "Generate a complete syllabus structure automatically."
+    }
+  ],
+
+  "templates_system": {
+    "description": "Provide prebuilt syllabus templates for common software courses.",
+    "templates": [
+      "Full Stack Development",
+      "Java Programming",
+      "Spring Boot",
+      "React Development",
+      "Python Programming",
+      "Data Science",
+      "Software Testing",
+      "DevOps"
+    ]
+  },
+
+  "branding_system": {
+    "description": "Allow the institute to customize branding.",
+    "features": [
+      "Upload institute logo",
+      "Set institute name",
+      "Set footer text",
+      "Choose PDF theme colors",
+      "Customize syllabus cover page"
+    ]
+  },
+
+  "pdf_designer": {
+    "description": "Editable PDF layout designer.",
+    "customizable_sections": [
+      "Cover page layout",
+      "Logo placement",
+      "Header style",
+      "Footer text",
+      "Module heading styles"
+    ]
+  },
+
+  "export_features": [
+    {
+      "type": "PDF",
+      "description": "Generate a professional syllabus PDF with cover page, modules, and topics."
+    },
+    {
+      "type": "DOCX",
+      "description": "Generate editable Microsoft Word syllabus document."
+    },
+    {
+      "type": "PowerPoint",
+      "description": "Generate training presentation slides automatically from the syllabus."
+    }
+  ],
+
+  "ppt_structure": {
+    "slides": [
+      "Course Overview",
+      "Module Overview",
+      "Topic Slides",
+      "Summary Slide"
+    ]
+  },
+
+  "data_model": {
+    "Course": {
+      "id": "string",
+      "title": "string",
+      "description": "string",
+      "modules": [
+        {
+          "moduleId": "string",
+          "moduleTitle": "string",
+          "topics": [
+            {
+              "topicId": "string",
+              "topicTitle": "string",
+              "notes": "string"
+            }
+          ]
+        }
+      ],
+      "createdAt": "date",
+      "updatedAt": "date",
+      "versions": "array"
+    }
+  },
+
+  "version_history": {
+    "description": "Every change in syllabus creates a version snapshot stored locally.",
+    "features": [
+      "View previous versions",
+      "Restore old version",
+      "Compare syllabus versions"
+    ]
+  },
+
+  "extra_features": [
+    "Auto save syllabus",
+    "Search courses",
+    "Duplicate course",
+    "Delete course",
+    "Preview syllabus before export",
+    "Responsive design"
+  ],
+
+  "ui_expectation": "Create a visually stunning professional UI suitable for training institutes. The application should feel like a premium SaaS platform with smooth animations, modern cards, intuitive syllabus builder interface, drag and drop editing, and beautifully designed export previews."
+}

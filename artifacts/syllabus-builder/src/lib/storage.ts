@@ -1,9 +1,10 @@
-import { get, set, keys, del } from 'idb-keyval';
+import { get, set, keys, del, clear } from 'idb-keyval';
 import { v4 as uuidv4 } from 'uuid';
-import { Course, Version, DashboardStats } from './types';
+import { Course, Version, DashboardStats, Branding } from './types';
 
 const COURSES_PREFIX = 'course_';
 const VERSIONS_PREFIX = 'version_';
+const BRANDING_KEY = 'institute_branding';
 
 // Helpers
 const getCourseKey = (id: string) => `${COURSES_PREFIX}${id}`;
@@ -120,4 +121,31 @@ export async function getDashboardStats(): Promise<DashboardStats> {
   });
 
   return { totalCourses, totalModules, totalTopics };
+}
+
+export async function getBranding(): Promise<Branding | undefined> {
+  return get<Branding>(BRANDING_KEY);
+}
+
+export async function saveBranding(branding: Branding): Promise<void> {
+  await set(BRANDING_KEY, branding);
+}
+
+export async function getAllData(): Promise<any> {
+  const allKeys = await keys();
+  const data: any = {};
+  for (const k of allKeys) {
+    data[k as string] = await get(k);
+  }
+  return data;
+}
+
+export async function importData(data: any): Promise<void> {
+  for (const key of Object.keys(data)) {
+    await set(key, data[key]);
+  }
+}
+
+export async function clearAllData(): Promise<void> {
+  await clear();
 }
