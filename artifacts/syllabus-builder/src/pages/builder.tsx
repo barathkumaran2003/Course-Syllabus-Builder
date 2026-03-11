@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Layout } from "@/components/layout";
 import { useParams } from "wouter";
 import { useCourse, useUpdateCourse, useCreateVersion } from "@/hooks/use-courses";
 import { Course, Module, Topic } from "@/lib/types";
 import { v4 as uuidv4 } from "uuid";
+import { useBranding } from "@/contexts/branding-context";
 import { 
   DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent 
 } from '@dnd-kit/core';
@@ -28,16 +29,38 @@ export default function Builder() {
   const updateCourse = useUpdateCourse();
   const createVersion = useCreateVersion();
   const { toast } = useToast();
+  const { branding } = useBranding();
 
   const [course, setCourse] = useState<Course | null>(null);
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'unsaved'>('saved');
 
-  // Initialize local state when data loads
+  // Track last-known branding name to detect changes vs. user customization
+  const prevBrandingNameRef = useRef<string | null>(null);
+
+  // Initialize local state when data loads; pre-fill instituteName from branding if empty
   useEffect(() => {
     if (initialCourse && !course) {
-      setCourse(initialCourse);
+      const brandingName = branding?.instituteName ?? "";
+      const resolvedName = initialCourse.instituteName || brandingName;
+      setCourse({ ...initialCourse, instituteName: resolvedName });
+      prevBrandingNameRef.current = brandingName;
     }
-  }, [initialCourse]);
+  }, [initialCourse, branding]);
+
+  // Auto-sync instituteName when branding changes (only if user hasn't customized it)
+  useEffect(() => {
+    if (!branding || !course) return;
+    const prev = prevBrandingNameRef.current;
+    const newBrandingName = branding.instituteName;
+    if (newBrandingName !== prev) {
+      // If course name still matches old branding value, update it to new branding value
+      if (course.instituteName === prev || course.instituteName === "") {
+        setCourse(c => c ? { ...c, instituteName: newBrandingName } : c);
+        setSaveStatus('unsaved');
+      }
+      prevBrandingNameRef.current = newBrandingName;
+    }
+  }, [branding]);
 
   // Debounced Auto-save
   useEffect(() => {
@@ -168,8 +191,8 @@ export default function Builder() {
             <div>
               <Label className="text-xs font-semibold text-muted-foreground uppercase">Institute Logo</Label>
               <div className="mt-2 flex items-center gap-4">
-                {course.instituteLogo ? (
-                  <img src={course.instituteLogo} alt="Logo" className="w-16 h-16 object-contain bg-white rounded-lg border p-1 shadow-sm" />
+                {(course.instituteLogo || branding?.logo) ? (
+                  <img src={course.instituteLogo || branding?.logo} alt="Logo" className="w-16 h-16 object-contain bg-white rounded-lg border p-1 shadow-sm" />
                 ) : (
                   <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center border border-dashed">
                     <Upload className="w-6 h-6 text-muted-foreground" />

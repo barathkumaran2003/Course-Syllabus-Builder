@@ -13,6 +13,7 @@ import AIGenerator from "./pages/ai-generator";
 import Templates from "./pages/templates";
 import Branding from "./pages/branding";
 import Settings from "./pages/settings";
+import { BrandingProvider } from "./contexts/branding-context";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,12 +45,14 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
+      <BrandingProvider>
+        <TooltipProvider>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <Router />
+          </WouterRouter>
+          <Toaster />
+        </TooltipProvider>
+      </BrandingProvider>
     </QueryClientProvider>
   );
 }

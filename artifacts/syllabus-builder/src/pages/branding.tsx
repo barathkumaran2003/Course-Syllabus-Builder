@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Upload, Save, Palette as PaletteIcon, CheckCircle2 } from "lucide-react";
 import * as storage from "@/lib/storage";
+import { useBranding } from "@/contexts/branding-context";
 
 const THEMES = [
   { id: "indigo", name: "Indigo / Violet", class: "bg-gradient-to-br from-indigo-500 to-violet-500" },
@@ -19,6 +20,7 @@ const THEMES = [
 
 export default function Branding() {
   const { toast } = useToast();
+  const { refreshBranding } = useBranding();
   const [instituteName, setInstituteName] = useState("My Institute");
   const [tagline, setTagline] = useState("Empowering Futures");
   const [footerText, setFooterText] = useState("© 2024 My Institute. All rights reserved.");
@@ -58,6 +60,7 @@ export default function Branding() {
       logo,
       theme
     });
+    await refreshBranding();
     setTimeout(() => {
       setIsSaving(false);
       toast({

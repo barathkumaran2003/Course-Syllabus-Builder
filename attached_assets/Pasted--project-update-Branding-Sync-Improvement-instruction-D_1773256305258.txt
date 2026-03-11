@@ -1,0 +1,42 @@
+{
+  "project_update": "Branding Sync Improvement",
+  "instruction": "Do not change any UI, layout, styling, font, animations, or existing features. The application design, structure, and behavior must remain exactly the same as currently implemented.",
+  
+  "required_change": {
+    "description": "Synchronize branding data across the application.",
+    "details": [
+      "When the user updates Institute Name or Institute Logo in the Branding page, it should automatically update in the Course Builder page.",
+      "The Course Builder page should read the branding data from the same local storage source used by the Branding page.",
+      "The institute name field in the Course Builder should automatically display the saved institute name from Branding.",
+      "The institute logo uploaded in Branding should automatically appear in the Course Builder logo preview.",
+      "Users should not need to manually enter the institute name again in the Course Builder."
+    ]
+  },
+
+  "technical_requirements": {
+    "storage": "Use the existing IndexedDB/local storage system already implemented.",
+    "state_sync": "Use shared global state (React Context or Zustand) so branding data updates propagate across pages instantly.",
+    "auto_update": [
+      "Course Builder should subscribe to branding state changes.",
+      "When branding data changes, the builder UI should refresh automatically."
+    ]
+  },
+
+  "important_constraints": [
+    "Do NOT modify any UI design",
+    "Do NOT modify the layout",
+    "Do NOT change fonts",
+    "Do NOT change colors",
+    "Do NOT add new UI elements",
+    "Do NOT remove existing fields",
+    "Do NOT change existing functionality",
+    "Only implement branding data synchronization"
+  ],
+
+  "expected_result": [
+    "User updates branding in Branding page",
+    "Institute name and logo save to local storage",
+    "Course Builder automatically displays the same institute name and logo",
+    "All pages remain visually identical"
+  ]
+}
