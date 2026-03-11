@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Professional Course Syllabus Builder"
+version = "1.0.0"
+id = "artifacts/syllabus-builder"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+localPort = 21554
+name = "web"
+paths = ["/"]
+
+[services.development]
+run = "pnpm --filter @workspace/syllabus-builder run dev"
+
+[services.env]
+PORT = "21554"
+BASE_PATH = "/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/syllabus-builder", "run", "build"]
+publicDir = "artifacts/syllabus-builder/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"

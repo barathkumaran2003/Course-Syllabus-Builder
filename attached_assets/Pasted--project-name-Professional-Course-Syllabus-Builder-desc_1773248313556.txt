@@ -1,0 +1,149 @@
+{
+  "project_name": "Professional Course Syllabus Builder",
+  "description": "A professional syllabus builder application for software training institutes. The application allows instructors to create structured course syllabi with modules and topics, organize them using drag-and-drop, store the data locally without a backend, and export the syllabus as professionally formatted PDF and DOC documents.",
+  
+  "tech_stack": {
+    "framework": "React + Vite",
+    "language": "TypeScript",
+    "styling": "TailwindCSS + Shadcn UI",
+    "state_management": "React Context",
+    "drag_drop": "dnd-kit",
+    "pdf_generation": "jspdf + jspdf-autotable",
+    "doc_generation": "docx",
+    "storage": "IndexedDB with LocalStorage fallback"
+  },
+
+  "ui_design": {
+    "design_style": "Modern SaaS dashboard",
+    "font": "Poppins",
+    "theme": "Gradient blue-purple professional theme",
+    "components": [
+      "Sidebar navigation",
+      "Dashboard overview",
+      "Course creation form",
+      "Drag-and-drop syllabus builder",
+      "Course preview panel",
+      "Export buttons",
+      "Version history viewer"
+    ],
+    "visual_effects": [
+      "Glassmorphism cards",
+      "Smooth hover animations",
+      "Soft shadows",
+      "Animated buttons",
+      "Fade-in list transitions"
+    ]
+  },
+
+  "application_pages": [
+    "Dashboard",
+    "Course Builder",
+    "Course Library",
+    "Preview & Export",
+    "Version History"
+  ],
+
+  "core_features": [
+    {
+      "feature": "Multiple Courses",
+      "description": "Users can create multiple courses and manage them in a course library."
+    },
+    {
+      "feature": "Modules inside courses",
+      "description": "Each course can contain multiple modules."
+    },
+    {
+      "feature": "Topics inside modules",
+      "description": "Each module can contain multiple topics."
+    },
+    {
+      "feature": "Drag and Drop Builder",
+      "description": "Users can drag and reorder modules and topics using drag-and-drop functionality."
+    },
+    {
+      "feature": "Permanent Local Storage",
+      "description": "All data must be stored locally using IndexedDB so it remains even after refreshing or reopening the browser."
+    },
+    {
+      "feature": "Course Preview",
+      "description": "Users can preview the entire syllabus in a formatted layout before downloading."
+    },
+    {
+      "feature": "PDF Export",
+      "description": "Generate a professionally formatted PDF syllabus document."
+    },
+    {
+      "feature": "DOC Export",
+      "description": "Generate a Microsoft Word .docx syllabus document."
+    },
+    {
+      "feature": "Course Cover Page",
+      "description": "The generated PDF should include a professional cover page with course name, institute name, and date."
+    },
+    {
+      "feature": "Institute Logo",
+      "description": "Users can upload their institute logo which will appear on the PDF cover page."
+    },
+    {
+      "feature": "Version History",
+      "description": "Every time a syllabus is updated, the previous version should be stored locally so users can restore it."
+    }
+  ],
+
+  "data_structure": {
+    "Course": {
+      "id": "string",
+      "courseTitle": "string",
+      "courseDescription": "string",
+      "modules": [
+        {
+          "moduleId": "string",
+          "moduleTitle": "string",
+          "topics": [
+            {
+              "topicId": "string",
+              "topicTitle": "string",
+              "notes": "string"
+            }
+          ]
+        }
+      ],
+      "createdAt": "date",
+      "updatedAt": "date"
+    }
+  },
+
+  "pdf_format": {
+    "cover_page": [
+      "Institute Logo",
+      "Institute Name",
+      "Course Title",
+      "Course Description",
+      "Generated Date"
+    ],
+    "content_structure": [
+      "Module Heading",
+      "Topic List",
+      "Topic Notes"
+    ]
+  },
+
+  "doc_format": {
+    "structure": [
+      "Course Title",
+      "Modules",
+      "Topics",
+      "Notes"
+    ]
+  },
+
+  "extra_capabilities": [
+    "Search courses",
+    "Duplicate course",
+    "Delete course",
+    "Auto save syllabus",
+    "Responsive layout for laptop and tablet"
+  ],
+
+  "ui_expectation": "Create a stunning and professional UI suitable for a software training institute. The UI should feel like a premium SaaS product with smooth animations, modern cards, sidebar navigation, and well-organized syllabus editing interface."
+}

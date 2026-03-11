@@ -1,0 +1,29 @@
+packages:
+  "@dnd-kit/core": "Drag and drop functionality for the builder"
+  "@dnd-kit/sortable": "Sortable lists for modules and topics"
+  "@dnd-kit/utilities": "Utilities for dnd-kit"
+  "jspdf": "PDF export generation"
+  "jspdf-autotable": "Table formatting for PDF exports"
+  "docx": "DOCX file generation for Word exports"
+  "idb-keyval": "Promise-based IndexedDB wrapper for local storage"
+  "date-fns": "Date formatting for versions and displays"
+  "uuid": "Generating unique IDs for courses, modules, and topics"
+  "@types/uuid": "Types for UUID"
+  "framer-motion": "Smooth animations and page transitions"
+  "file-saver": "Saving generated docx files to disk"
+  "@types/file-saver": "Types for file-saver"
+  "lucide-react": "Icons for UI"
+
+images:
+  - path: "artifacts/syllabus-builder/public/images/hero-bg.png"
+    description: "Abstract fluid gradient mesh in professional indigo, violet, and soft blue colors, premium SaaS aesthetic, blurred and smooth"
+    aspect_ratio: "16:9"
+  - path: "artifacts/syllabus-builder/public/images/empty-state.png"
+    description: "Minimalist 3D illustration of an open book and papers floating, professional soft lighting, monochromatic blue and purple tones on transparent background"
+    aspect_ratio: "1:1"
+
+notes:
+  - Entirely frontend app using IndexedDB via idb-keyval
+  - React Query used to manage local async storage state
+  - No backend API calls
+  - Debounced auto-save implemented in the builder
