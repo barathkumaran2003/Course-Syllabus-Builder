@@ -1,0 +1,90 @@
+{
+  "task": "Improve Mobile Responsiveness Without Changing UI",
+  "priority": "CRITICAL",
+
+  "warning": "Do NOT change any UI, components, colors, fonts, layout structure, animations, or existing features. The design must remain exactly the same. Only improve responsive behavior for mobile devices.",
+
+  "problem_analysis": {
+    "desktop_view": "Application works perfectly on desktop.",
+    "mobile_view": "Alignment issues occur on smaller screens such as mobile devices.",
+    "root_cause": "Some components are not adapting properly to smaller screen widths."
+  },
+
+  "required_solution": {
+    "description": "Make the existing UI responsive for mobile screens without redesigning the layout.",
+    "rules": [
+      "Keep the same UI and design.",
+      "Only adjust responsive behavior using Tailwind breakpoints.",
+      "Fix alignment and spacing for mobile screens."
+    ]
+  },
+
+  "responsive_requirements": {
+
+    "sidebar_behavior": [
+      "On mobile screens (below 768px), collapse the sidebar into a hamburger menu.",
+      "Sidebar should slide in from the left when opened.",
+      "Main content should occupy full width when sidebar is closed."
+    ],
+
+    "dashboard_layout": [
+      "Cards should stack vertically on mobile instead of horizontal layout.",
+      "Maintain same card styling."
+    ],
+
+    "builder_page": [
+      "Course builder form and module editor should stack vertically.",
+      "Prevent horizontal overflow.",
+      "Inputs should take full width on mobile."
+    ],
+
+    "branding_page": [
+      "Branding form should stack above preview section.",
+      "Preview should move below the form on mobile.",
+      "Maintain same styling."
+    ],
+
+    "preview_export_page": [
+      "Export buttons panel should move below preview content.",
+      "Preview container should scale properly to screen width."
+    ],
+
+    "spacing_adjustments": [
+      "Add responsive padding using Tailwind (px-4, sm:px-6, lg:px-8).",
+      "Prevent UI elements from touching screen edges."
+    ]
+  },
+
+  "technical_requirements": {
+    "framework": "React + TailwindCSS",
+    "method": [
+      "Use Tailwind responsive utilities (sm:, md:, lg:).",
+      "Use flex-wrap where needed.",
+      "Ensure containers use max-w-full.",
+      "Avoid horizontal scrolling."
+    ]
+  },
+
+  "screen_sizes": {
+    "mobile": "320px – 768px",
+    "tablet": "768px – 1024px",
+    "desktop": "1024px and above"
+  },
+
+  "expected_result": [
+    "UI remains exactly the same.",
+    "Application works perfectly on mobile devices.",
+    "No horizontal scrolling.",
+    "Proper alignment on small screens.",
+    "Responsive sidebar behavior."
+  ],
+
+  "strict_constraints": [
+    "Do not redesign the UI.",
+    "Do not change fonts.",
+    "Do not change colors.",
+    "Do not change layout structure.",
+    "Do not add new features.",
+    "Only implement responsive adjustments."
+  ]
+}

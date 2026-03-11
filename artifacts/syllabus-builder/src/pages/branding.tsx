@@ -102,7 +102,7 @@ export default function Branding() {
 
               <div className="space-y-2 pt-2">
                 <Label>Institute Logo</Label>
-                <div className="flex items-center gap-4 mt-2">
+                <div className="flex flex-wrap items-center gap-4 mt-2">
                   <div className="w-24 h-24 rounded-xl border-2 border-dashed border-border flex items-center justify-center bg-muted/30 overflow-hidden relative">
                     {logo ? (
                       <img src={logo} alt="Logo" className="w-full h-full object-contain p-2" />

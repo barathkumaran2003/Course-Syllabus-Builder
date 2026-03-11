@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { BookOpen, LayoutDashboard, Library, FileText, Settings, History, Wand2, LayoutTemplate, Palette, Settings2 } from "lucide-react";
+import { BookOpen, LayoutDashboard, Library, FileText, Settings, History, Wand2, LayoutTemplate, Palette, Settings2, Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
@@ -11,6 +11,7 @@ interface LayoutProps {
 
 export function Layout({ children, activeCourseId }: LayoutProps) {
   const [location] = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const mainNav = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -27,69 +28,129 @@ export function Layout({ children, activeCourseId }: LayoutProps) {
     { name: "Version History", href: `/history/${activeCourseId}`, icon: History },
   ] : [];
 
+  const SidebarContent = () => (
+    <>
+      <div className="p-6 flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/30">
+          <BookOpen className="w-5 h-5 text-white" />
+        </div>
+        <span className="font-display font-bold text-lg text-gradient">SyllabusPro</span>
+      </div>
+
+      <div className="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
+        <div>
+          <p className="px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Menu</p>
+          <nav className="space-y-1">
+            {mainNav.map((item) => {
+              const isActive = location === item.href || (item.href !== '/' && location.startsWith(item.href));
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${isActive ? 'bg-primary/10 text-primary font-medium' : 'text-foreground/70 hover:bg-muted hover:text-foreground'}`}
+                >
+                  <item.icon className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                  {item.name}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <AnimatePresence>
+          {activeCourseId && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+            >
+              <p className="px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Active Course</p>
+              <nav className="space-y-1">
+                {courseNav.map((item) => {
+                  const isActive = location === item.href;
+                  return (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      onClick={() => setSidebarOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${isActive ? 'bg-primary/10 text-primary font-medium' : 'text-foreground/70 hover:bg-muted hover:text-foreground'}`}
+                    >
+                      <item.icon className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
+                      {item.name}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </>
+  );
+
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
-      {/* Sidebar */}
-      <motion.aside 
-        initial={{ x: -250 }}
-        animate={{ x: 0 }}
-        className="w-64 glass-panel flex flex-col z-20"
+
+      {/* Mobile overlay backdrop */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/50 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
+      {/* Sidebar — desktop: always visible, mobile: slide-in overlay */}
+      <motion.aside
+        initial={false}
+        animate={{ x: sidebarOpen ? 0 : undefined }}
+        className={`
+          glass-panel flex flex-col z-50
+          fixed inset-y-0 left-0 w-64
+          md:static md:translate-x-0 md:flex
+          transition-transform duration-300
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        `}
       >
-        <div className="p-6 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-lg shadow-primary/30">
-            <BookOpen className="w-5 h-5 text-white" />
-          </div>
-          <span className="font-display font-bold text-lg text-gradient">SyllabusPro</span>
-        </div>
+        {/* Close button on mobile */}
+        <button
+          className="absolute top-4 right-4 md:hidden text-muted-foreground hover:text-foreground"
+          onClick={() => setSidebarOpen(false)}
+        >
+          <X className="w-5 h-5" />
+        </button>
 
-        <div className="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
-          <div>
-            <p className="px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Menu</p>
-            <nav className="space-y-1">
-              {mainNav.map((item) => {
-                const isActive = location === item.href || (item.href !== '/' && location.startsWith(item.href));
-                return (
-                  <Link key={item.name} href={item.href} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${isActive ? 'bg-primary/10 text-primary font-medium' : 'text-foreground/70 hover:bg-muted hover:text-foreground'}`}>
-                    <item.icon className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
-
-          <AnimatePresence>
-            {activeCourseId && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-              >
-                <p className="px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Active Course</p>
-                <nav className="space-y-1">
-                  {courseNav.map((item) => {
-                    const isActive = location === item.href;
-                    return (
-                      <Link key={item.name} href={item.href} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${isActive ? 'bg-primary/10 text-primary font-medium' : 'text-foreground/70 hover:bg-muted hover:text-foreground'}`}>
-                        <item.icon className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-muted-foreground'}`} />
-                        {item.name}
-                      </Link>
-                    );
-                  })}
-                </nav>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <SidebarContent />
       </motion.aside>
 
       {/* Main Content */}
-      <main className="flex-1 relative overflow-hidden flex flex-col">
+      <main className="flex-1 relative overflow-hidden flex flex-col min-w-0">
         {/* Decorative background elements */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
         <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-accent/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
-        
-        <div className="flex-1 overflow-y-auto relative z-10 p-6 md:p-8">
+
+        {/* Mobile top bar */}
+        <div className="md:hidden flex items-center gap-3 px-4 py-3 border-b border-border/50 bg-background/80 backdrop-blur-sm relative z-10 shrink-0">
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-1.5 rounded-lg hover:bg-muted text-foreground/70 hover:text-foreground transition-colors"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+              <BookOpen className="w-3.5 h-3.5 text-white" />
+            </div>
+            <span className="font-display font-bold text-base text-gradient">SyllabusPro</span>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto relative z-10 p-4 md:p-6 lg:p-8">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

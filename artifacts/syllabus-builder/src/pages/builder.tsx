@@ -142,7 +142,7 @@ export default function Builder() {
 
   return (
     <Layout activeCourseId={courseId}>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-wrap items-start justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold font-display text-foreground">Syllabus Builder</h1>
           <div className="flex items-center text-sm mt-1">
@@ -154,15 +154,15 @@ export default function Builder() {
         <Button 
           onClick={handleManualSaveVersion} 
           variant="outline" 
-          className="rounded-xl border-primary/20 hover:bg-primary/5 text-primary"
+          className="rounded-xl border-primary/20 hover:bg-primary/5 text-primary shrink-0"
         >
           <Save className="w-4 h-4 mr-2" /> Save Snapshot
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-160px)]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 lg:h-[calc(100vh-200px)]">
         {/* Left Panel: Course Meta */}
-        <div className="lg:col-span-4 space-y-6 overflow-y-auto pr-2 custom-scrollbar">
+        <div className="lg:col-span-4 space-y-6 lg:overflow-y-auto pr-0 lg:pr-2 custom-scrollbar">
           <Card className="p-5 glass-card rounded-2xl space-y-5">
             <div>
               <Label className="text-xs font-semibold text-muted-foreground uppercase">Course Title</Label>
@@ -190,7 +190,7 @@ export default function Builder() {
             </div>
             <div>
               <Label className="text-xs font-semibold text-muted-foreground uppercase">Institute Logo</Label>
-              <div className="mt-2 flex items-center gap-4">
+              <div className="mt-2 flex flex-wrap items-center gap-4">
                 {(course.instituteLogo || branding?.logo) ? (
                   <img src={course.instituteLogo || branding?.logo} alt="Logo" className="w-16 h-16 object-contain bg-white rounded-lg border p-1 shadow-sm" />
                 ) : (
@@ -207,7 +207,7 @@ export default function Builder() {
         </div>
 
         {/* Right Panel: Modules DND */}
-        <div className="lg:col-span-8 overflow-y-auto pr-2 custom-scrollbar pb-20">
+        <div className="lg:col-span-8 lg:overflow-y-auto pr-0 lg:pr-2 custom-scrollbar pb-20">
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={course.modules.map(m => m.id)} strategy={verticalListSortingStrategy}>
               <div className="space-y-4">
@@ -325,7 +325,7 @@ function SortableModule({ module, course, setCourse, setSaveStatus }: any) {
                   ))}
                 </SortableContext>
               </DndContext>
-              <Button onClick={addTopic} variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10 ml-8">
+              <Button onClick={addTopic} variant="ghost" size="sm" className="text-primary hover:text-primary hover:bg-primary/10 ml-2 sm:ml-8">
                 <Plus className="w-4 h-4 mr-1" /> Add Topic
               </Button>
             </div>
@@ -373,7 +373,7 @@ function SortableTopic({ topic, moduleId, course, setCourse, setSaveStatus }: an
   };
 
   return (
-    <div ref={setNodeRef} style={style} className={`ml-8 flex items-start gap-2 group ${isDragging ? 'opacity-50' : ''}`}>
+    <div ref={setNodeRef} style={style} className={`ml-2 sm:ml-8 flex items-start gap-2 group ${isDragging ? 'opacity-50' : ''}`}>
       <button {...attributes} {...listeners} className="mt-2 text-muted-foreground/50 hover:text-foreground cursor-grab">
         <GripVertical className="w-4 h-4" />
       </button>
