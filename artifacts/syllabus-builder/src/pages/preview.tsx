@@ -10,14 +10,19 @@ import autoTable from "jspdf-autotable";
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
 import { saveAs } from "file-saver";
 import pptxgen from "pptxgenjs";
-import { getBranding } from "@/lib/storage";
+import { useBranding } from "@/contexts/branding-context";
 
 export default function Preview() {
   const { courseId } = useParams<{ courseId: string }>();
   const { data: course, isLoading } = useCourse(courseId);
+  const { branding } = useBranding();
   const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [isExportingDocx, setIsExportingDocx] = useState(false);
   const [isExportingPPT, setIsExportingPPT] = useState(false);
+
+  // Resolved values: branding is the source of truth, course fields are fallback
+  const displayInstituteName = branding?.instituteName || course?.instituteName || "";
+  const displayLogo = branding?.logo || course?.instituteLogo || "";
 
   if (isLoading || !course) {
     return <Layout activeCourseId={courseId}><div className="flex justify-center p-20"><Loader2 className="w-8 h-8 animate-spin" /></div></Layout>;
@@ -37,7 +42,7 @@ export default function Preview() {
       
       doc.setFontSize(14);
       doc.setTextColor(100, 100, 100);
-      doc.text(course.instituteName, 20, yPos);
+      doc.text(displayInstituteName, 20, yPos);
       yPos += 20;
 
       // Description
@@ -90,7 +95,7 @@ export default function Preview() {
           alignment: AlignmentType.CENTER,
         }),
         new Paragraph({
-          text: course.instituteName,
+          text: displayInstituteName,
           heading: HeadingLevel.HEADING_2,
           alignment: AlignmentType.CENTER,
           spacing: { after: 400 },
@@ -140,7 +145,6 @@ export default function Preview() {
   const exportPPT = async () => {
     setIsExportingPPT(true);
     try {
-      const branding = await getBranding();
       const pres = new pptxgen();
       
       // Cover Slide
@@ -152,7 +156,7 @@ export default function Preview() {
         fontSize: 44, color: "ffffff", bold: true, align: "center" 
       });
       
-      coverSlide.addText(branding?.instituteName || course.instituteName, { 
+      coverSlide.addText(displayInstituteName, { 
         x: "10%", y: "60%", w: "80%", h: 1, 
         fontSize: 24, color: "a5b4fc", align: "center" 
       });
@@ -202,11 +206,11 @@ export default function Preview() {
         <div className="flex-1 bg-muted/30 rounded-2xl border p-4 lg:p-8 overflow-y-auto custom-scrollbar">
           <Card className="max-w-3xl mx-auto bg-white shadow-xl min-h-[800px] p-10 md:p-16">
             <div className="text-center mb-12 pb-8 border-b-2 border-primary/20">
-              {course.instituteLogo && (
-                <img src={course.instituteLogo} alt="Logo" className="h-20 mx-auto mb-6 object-contain" />
+              {displayLogo && (
+                <img src={displayLogo} alt="Logo" className="h-20 mx-auto mb-6 object-contain" />
               )}
               <h1 className="text-4xl font-bold text-slate-900 mb-3 font-display">{course.courseTitle}</h1>
-              <p className="text-xl text-primary font-medium">{course.instituteName}</p>
+              <p className="text-xl text-primary font-medium">{displayInstituteName}</p>
             </div>
 
             <div className="mb-10 text-slate-700 leading-relaxed text-lg">

@@ -1,0 +1,86 @@
+{
+  "task": "Fix Branding Synchronization Across Application",
+  "priority": "HIGH",
+  "warning": "Do NOT change any UI, layout, font, design, styling, animations, components, or features. The application must remain visually and structurally identical to the current implementation.",
+
+  "problem_analysis": {
+    "branding_page": "Institute name and institute logo are saved correctly.",
+    "builder_page": "Institute name does not automatically reflect from Branding settings.",
+    "preview_page": "Institute name and logo do not always reflect branding data.",
+    "root_cause": "Branding data is not being shared globally across pages."
+  },
+
+  "required_solution": {
+    "description": "Use the existing local storage / IndexedDB branding data as the single source of truth across all pages.",
+    "rules": [
+      "Branding data must be stored once globally.",
+      "All pages must read from the same branding data source.",
+      "Branding updates must automatically reflect everywhere."
+    ]
+  },
+
+  "branding_data_structure": {
+    "branding": {
+      "instituteName": "string",
+      "tagline": "string",
+      "footerText": "string",
+      "logo": "base64|string",
+      "themeColor": "string"
+    }
+  },
+
+  "behavior_changes": [
+    {
+      "page": "Branding Page",
+      "behavior": [
+        "When institute name or logo is updated, save it to the global branding state.",
+        "Persist branding data in IndexedDB/localStorage."
+      ]
+    },
+
+    {
+      "page": "Course Builder Page",
+      "behavior": [
+        "Institute name field must automatically load from branding.instituteName.",
+        "Institute logo preview must automatically load from branding.logo.",
+        "Users should NOT need to re-enter institute name manually.",
+        "Builder should subscribe to branding state updates."
+      ]
+    },
+
+    {
+      "page": "Preview & Export Page",
+      "behavior": [
+        "Course preview must display branding.instituteName.",
+        "Course preview must display branding.logo.",
+        "Preview should always reflect latest branding values."
+      ]
+    }
+  ],
+
+  "state_management_requirement": {
+    "description": "Use the existing global state system (React Context or Zustand) to share branding data.",
+    "logic": [
+      "Create a global branding store if not already implemented.",
+      "Load branding from IndexedDB/localStorage on app start.",
+      "Provide branding data to all pages through shared state."
+    ]
+  },
+
+  "expected_result": [
+    "User updates institute name or logo in Branding page.",
+    "Changes are saved to local storage.",
+    "Course Builder automatically shows updated institute name and logo.",
+    "Preview page automatically displays the updated institute name and logo.",
+    "No UI or design changes occur."
+  ],
+
+  "strict_constraints": [
+    "Do not modify any UI components.",
+    "Do not change layout structure.",
+    "Do not modify fonts or typography.",
+    "Do not change colors or theme.",
+    "Do not add or remove features.",
+    "Only implement branding synchronization."
+  ]
+}
