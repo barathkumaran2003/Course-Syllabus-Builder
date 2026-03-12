@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { FileDown, Download, Loader2, Presentation } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
-import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from "docx";
+import { Document, Packer, Paragraph, TextRun, AlignmentType, BorderStyle, convertInchesToTwip } from "docx";
 import { saveAs } from "file-saver";
 import pptxgen from "pptxgenjs";
 import { useBranding } from "@/contexts/branding-context";
@@ -31,52 +30,133 @@ export default function Preview() {
   const exportPDF = async () => {
     setIsExportingPDF(true);
     try {
-      const doc = new jsPDF();
-      let yPos = 20;
+      const doc = new jsPDF({ unit: "mm", format: "a4" });
+      const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      const contentW = pageW - margin * 2;
+      let y = margin;
 
-      // Title & Institute
-      doc.setFontSize(24);
-      doc.setTextColor(40, 40, 40);
-      doc.text(course.courseTitle, 20, yPos);
-      yPos += 10;
-      
-      doc.setFontSize(14);
-      doc.setTextColor(100, 100, 100);
-      doc.text(displayInstituteName, 20, yPos);
-      yPos += 20;
-
-      // Description
-      doc.setFontSize(11);
-      doc.setTextColor(60, 60, 60);
-      const splitDesc = doc.splitTextToSize(course.courseDescription, 170);
-      doc.text(splitDesc, 20, yPos);
-      yPos += (splitDesc.length * 6) + 15;
-
-      // Modules
-      course.modules.forEach((mod, mIndex) => {
-        if (yPos > 250) { doc.addPage(); yPos = 20; }
-        
-        doc.setFontSize(14);
-        doc.setTextColor(0, 0, 0);
-        doc.setFont("helvetica", "bold");
-        doc.text(`Module ${mIndex + 1}: ${mod.title}`, 20, yPos);
-        yPos += 8;
-
-        const tableData = mod.topics.map((t, i) => [`${i + 1}`, t.title, t.notes]);
-        
-        if (tableData.length > 0) {
-          autoTable(doc, {
-            startY: yPos,
-            head: [['#', 'Topic', 'Details']],
-            body: tableData,
-            theme: 'striped',
-            headStyles: { fillColor: [99, 102, 241] }, // Primary color
-            margin: { left: 20, right: 20 },
-          });
-          yPos = (doc as any).lastAutoTable.finalY + 15;
-        } else {
-          yPos += 10;
+      const checkPageBreak = (neededHeight: number) => {
+        if (y + neededHeight > pageH - margin) {
+          doc.addPage();
+          y = margin;
         }
+      };
+
+      // ── Header: Logo ─────────────────────────────────────────────────
+      if (displayLogo) {
+        try {
+          const ext = displayLogo.startsWith("data:image/png") ? "PNG" : "JPEG";
+          const logoH = 20;
+          const logoW = 40;
+          doc.addImage(displayLogo, ext, (pageW - logoW) / 2, y, logoW, logoH);
+          y += logoH + 6;
+        } catch (_) { /* skip if image fails */ }
+      }
+
+      // Course Title
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(26);
+      doc.setTextColor(15, 23, 42); // slate-900
+      const titleLines = doc.splitTextToSize(course.courseTitle, contentW);
+      doc.text(titleLines, pageW / 2, y, { align: "center" });
+      y += titleLines.length * 10 + 3;
+
+      // Institute Name
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(13);
+      doc.setTextColor(99, 102, 241); // primary indigo
+      doc.text(displayInstituteName, pageW / 2, y, { align: "center" });
+      y += 8;
+
+      // Separator line
+      doc.setDrawColor(99, 102, 241);
+      doc.setLineWidth(0.5);
+      doc.line(margin, y, pageW - margin, y);
+      y += 10;
+
+      // ── Course Description ────────────────────────────────────────────
+      if (course.courseDescription) {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(11);
+        doc.setTextColor(71, 85, 105); // slate-600
+        const descLines = doc.splitTextToSize(course.courseDescription, contentW);
+        checkPageBreak(descLines.length * 6 + 10);
+        doc.text(descLines, margin, y);
+        y += descLines.length * 6 + 12;
+      }
+
+      // ── Modules ───────────────────────────────────────────────────────
+      course.modules.forEach((mod, mIndex) => {
+        checkPageBreak(18);
+
+        // Numbered badge rect
+        const badgeSize = 7;
+        const badgeX = margin;
+        const badgeY = y - 5.5;
+        doc.setFillColor(99, 102, 241);
+        doc.roundedRect(badgeX, badgeY, badgeSize, badgeSize, 1.5, 1.5, "F");
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(8);
+        doc.setTextColor(255, 255, 255);
+        doc.text(String(mIndex + 1), badgeX + badgeSize / 2, badgeY + 5, { align: "center" });
+
+        // Module title
+        doc.setFont("helvetica", "bold");
+        doc.setFontSize(14);
+        doc.setTextColor(30, 41, 59); // slate-800
+        const modTitle = mod.title;
+        doc.text(modTitle, margin + badgeSize + 3, y);
+        y += 2;
+
+        // Underline rule
+        doc.setDrawColor(226, 232, 240); // slate-200
+        doc.setLineWidth(0.3);
+        doc.line(margin, y, pageW - margin, y);
+        y += 8;
+
+        // Topics
+        if (mod.topics.length === 0) {
+          doc.setFont("helvetica", "italic");
+          doc.setFontSize(10);
+          doc.setTextColor(148, 163, 184); // slate-400
+          checkPageBreak(8);
+          doc.text("No topics defined.", margin + 6, y);
+          y += 10;
+        } else {
+          mod.topics.forEach((topic) => {
+            // Bullet dot
+            const bulletX = margin + 8;
+            const bulletY = y - 1.5;
+            doc.setFillColor(139, 92, 246); // accent violet
+            doc.circle(bulletX, bulletY, 1.2, "F");
+
+            // Topic title (bold)
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.setTextColor(30, 41, 59); // slate-800
+            const topicTitleLines = doc.splitTextToSize(topic.title, contentW - 16);
+            checkPageBreak(topicTitleLines.length * 6 + 4);
+            doc.text(topicTitleLines, margin + 13, y);
+            y += topicTitleLines.length * 6;
+
+            // Topic notes (regular, gray)
+            if (topic.notes) {
+              doc.setFont("helvetica", "normal");
+              doc.setFontSize(10);
+              doc.setTextColor(100, 116, 139); // slate-500
+              const notesLines = doc.splitTextToSize(topic.notes, contentW - 16);
+              checkPageBreak(notesLines.length * 5.5 + 3);
+              doc.text(notesLines, margin + 13, y);
+              y += notesLines.length * 5.5 + 5;
+            } else {
+              y += 4;
+            }
+          });
+        }
+
+        y += 6; // spacing after each module
       });
 
       doc.save(`${course.courseTitle.replace(/\s+/g, '_')}_Syllabus.pdf`);
@@ -88,54 +168,165 @@ export default function Preview() {
   const exportDocx = async () => {
     setIsExportingDocx(true);
     try {
-      const children: any[] = [
-        new Paragraph({
-          text: course.courseTitle,
-          heading: HeadingLevel.TITLE,
-          alignment: AlignmentType.CENTER,
-        }),
-        new Paragraph({
-          text: displayInstituteName,
-          heading: HeadingLevel.HEADING_2,
-          alignment: AlignmentType.CENTER,
-          spacing: { after: 400 },
-        }),
-        new Paragraph({
-          text: course.courseDescription,
-          spacing: { after: 400 },
-        }),
-      ];
+      const children: any[] = [];
 
-      course.modules.forEach((mod, mIndex) => {
+      // Course Title (centered, large)
+      children.push(
+        new Paragraph({
+          alignment: AlignmentType.CENTER,
+          spacing: { after: 120 },
+          children: [
+            new TextRun({
+              text: course.courseTitle,
+              bold: true,
+              size: 52, // 26pt
+              color: "0F172A", // slate-900
+            }),
+          ],
+        })
+      );
+
+      // Institute Name (centered, indigo)
+      if (displayInstituteName) {
         children.push(
           new Paragraph({
-            text: `Module ${mIndex + 1}: ${mod.title}`,
-            heading: HeadingLevel.HEADING_1,
-            spacing: { before: 400, after: 200 },
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 80 },
+            children: [
+              new TextRun({
+                text: displayInstituteName,
+                size: 26, // 13pt
+                color: "6366F1", // primary indigo
+              }),
+            ],
+          })
+        );
+      }
+
+      // Separator (empty paragraph with bottom border)
+      children.push(
+        new Paragraph({
+          spacing: { after: 240 },
+          border: {
+            bottom: {
+              color: "C7D2FE", // indigo-200
+              space: 4,
+              style: BorderStyle.SINGLE,
+              size: 6,
+            },
+          },
+          children: [],
+        })
+      );
+
+      // Course Description
+      if (course.courseDescription) {
+        children.push(
+          new Paragraph({
+            spacing: { after: 320 },
+            children: [
+              new TextRun({
+                text: course.courseDescription,
+                size: 22, // 11pt
+                color: "475569", // slate-600
+              }),
+            ],
+          })
+        );
+      }
+
+      // Modules
+      course.modules.forEach((mod, mIndex) => {
+        // Module heading: "1  Module Title"
+        children.push(
+          new Paragraph({
+            spacing: { before: 400, after: 120 },
+            border: {
+              bottom: {
+                color: "E2E8F0", // slate-200
+                space: 4,
+                style: BorderStyle.SINGLE,
+                size: 4,
+              },
+            },
+            children: [
+              new TextRun({
+                text: `${mIndex + 1}  `,
+                bold: true,
+                size: 28, // 14pt
+                color: "6366F1", // indigo badge color
+              }),
+              new TextRun({
+                text: mod.title,
+                bold: true,
+                size: 28, // 14pt
+                color: "1E293B", // slate-800
+              }),
+            ],
           })
         );
 
-        mod.topics.forEach((t, i) => {
+        if (mod.topics.length === 0) {
           children.push(
             new Paragraph({
+              spacing: { after: 120 },
               children: [
-                new TextRun({ text: `${i + 1}. ${t.title}`, bold: true }),
+                new TextRun({
+                  text: "No topics defined.",
+                  italics: true,
+                  size: 20,
+                  color: "94A3B8", // slate-400
+                }),
               ],
-              spacing: { before: 100 },
-            }),
-            new Paragraph({
-              text: t.notes,
-              spacing: { after: 100 },
             })
           );
-        });
+        } else {
+          mod.topics.forEach((topic) => {
+            // Topic title as bullet
+            children.push(
+              new Paragraph({
+                spacing: { before: 120, after: 40 },
+                indent: { left: convertInchesToTwip(0.25) },
+                children: [
+                  new TextRun({ text: "• ", size: 22, color: "8B5CF6" }), // accent violet bullet
+                  new TextRun({
+                    text: topic.title,
+                    bold: true,
+                    size: 22, // 11pt
+                    color: "1E293B", // slate-800
+                  }),
+                ],
+              })
+            );
+
+            // Topic notes
+            if (topic.notes) {
+              children.push(
+                new Paragraph({
+                  spacing: { after: 80 },
+                  indent: { left: convertInchesToTwip(0.45) },
+                  children: [
+                    new TextRun({
+                      text: topic.notes,
+                      size: 20, // 10pt
+                      color: "64748B", // slate-500
+                    }),
+                  ],
+                })
+              );
+            }
+          });
+        }
       });
 
-      const doc = new Document({
+      const docFile = new Document({
+        numbering: {
+          config: [],
+        },
         sections: [{ properties: {}, children }],
       });
 
-      const blob = await Packer.toBlob(doc);
+      const blob = await Packer.toBlob(docFile);
       saveAs(blob, `${course.courseTitle.replace(/\s+/g, '_')}_Syllabus.docx`);
     } finally {
       setIsExportingDocx(false);

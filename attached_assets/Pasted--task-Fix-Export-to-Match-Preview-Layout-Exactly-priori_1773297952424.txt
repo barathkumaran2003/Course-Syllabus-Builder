@@ -1,0 +1,86 @@
+{
+  "task": "Fix Export to Match Preview Layout Exactly",
+  "priority": "CRITICAL",
+
+  "warning": "Do NOT change any UI, fonts, styling, layout, colors, animations, components, or features. The application must remain visually identical. Only modify the export logic.",
+
+  "problem_analysis": {
+    "preview_page": "Displays the syllabus in a clean document-style layout with logo, title, institute name, description, modules, topics, and notes.",
+    "export_pdf_doc": "Currently converts the syllabus into a table/grid layout which looks completely different from the preview.",
+    "root_cause": "PDF and DOC exports are generated using a table-based data structure instead of the preview layout."
+  },
+
+  "required_behavior": {
+    "description": "Exported PDF and DOC files must look exactly the same as the Preview page.",
+    "rules": [
+      "Use the preview layout as the source for export.",
+      "Preserve the same typography and spacing.",
+      "Maintain the same module and topic structure.",
+      "Do not convert topics into table/grid format."
+    ]
+  },
+
+  "export_logic_changes": {
+
+    "pdf_export": [
+      "Capture the preview container DOM element.",
+      "Render the same HTML structure inside the PDF.",
+      "Ensure logo, title, institute name, description, modules, topics, and notes match the preview layout."
+    ],
+
+    "doc_export": [
+      "Generate the DOCX using the same preview layout hierarchy.",
+      "Use headings and paragraphs instead of tables.",
+      "Modules should appear as headings.",
+      "Topics should appear as bullet points with descriptions below them."
+    ]
+  },
+
+  "content_structure_required": {
+    "header": [
+      "Institute Logo",
+      "Course Title",
+      "Institute Name"
+    ],
+
+    "course_section": [
+      "Course Description"
+    ],
+
+    "modules": [
+      {
+        "module_title": "Module Name",
+        "topics": [
+          {
+            "topic_title": "Topic Name",
+            "topic_description": "Topic Details"
+          }
+        ]
+      }
+    ]
+  },
+
+  "visual_rules": [
+    "Export must preserve preview spacing.",
+    "Export must preserve preview alignment.",
+    "Export must preserve heading hierarchy.",
+    "Export must preserve bullet style for topics."
+  ],
+
+  "strict_constraints": [
+    "Do NOT redesign UI.",
+    "Do NOT modify fonts.",
+    "Do NOT change colors.",
+    "Do NOT modify page layout.",
+    "Do NOT change preview structure.",
+    "Only change how PDF and DOC are generated."
+  ],
+
+  "expected_result": [
+    "Preview page layout and exported document look identical.",
+    "Logo appears in the same position.",
+    "Institute name matches preview.",
+    "Topics appear as bullet points instead of table rows.",
+    "Exported document visually matches the preview page."
+  ]
+}
