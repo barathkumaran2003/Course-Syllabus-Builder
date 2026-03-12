@@ -28,16 +28,100 @@ export default function Preview() {
     return <Layout activeCourseId={courseId}><div className="flex justify-center p-20"><Loader2 className="w-8 h-8 animate-spin" /></div></Layout>;
   }
 
-  // Renders the preview card to a canvas and returns it
+  // Renders the preview card to a canvas, sanitizing oklab/oklch colors first
   const renderPreviewCanvas = async () => {
     if (!previewRef.current) throw new Error("Preview element not available");
+
+    // 1×1 canvas trick: browser natively converts any CSS color (incl. oklab/oklch) to sRGB
+    const colorCanvas = document.createElement("canvas");
+    colorCanvas.width = colorCanvas.height = 1;
+    const ctx = colorCanvas.getContext("2d")!;
+
+    const toRgb = (color: string): string | null => {
+      try {
+        ctx.clearRect(0, 0, 1, 1);
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, 1, 1);
+        const [r, g, b, a] = ctx.getImageData(0, 0, 1, 1).data;
+        return a < 255
+          ? `rgba(${r},${g},${b},${+(a / 255).toFixed(3)})`
+          : `rgb(${r},${g},${b})`;
+      } catch {
+        return null;
+      }
+    };
+
+    const colorProps = [
+      "color", "background-color",
+      "border-top-color", "border-right-color", "border-bottom-color", "border-left-color",
+      "outline-color",
+    ];
+
+    // Collect original elements for index-aligned mapping inside onclone
+    const originalElements = [
+      previewRef.current,
+      ...Array.from(previewRef.current.querySelectorAll("*")),
+    ] as HTMLElement[];
+
     return html2canvas(previewRef.current, {
       scale: 2,
       useCORS: true,
       logging: false,
       backgroundColor: "#ffffff",
-      windowWidth: previewRef.current.scrollWidth,
-      windowHeight: previewRef.current.scrollHeight,
+      onclone: (clonedDoc: Document, clonedRoot: HTMLElement) => {
+        // ── Step 1: Override CSS custom properties in :root ──────────────
+        // html2canvas parses linked CSS files; oklch in those crashes it.
+        // Inject an override <style> that converts all CSS vars with oklch/oklab to rgb.
+        const varOverrides: string[] = [];
+
+        [...document.styleSheets].forEach((sheet) => {
+          try {
+            [...sheet.cssRules].forEach((rule) => {
+              const styleRule = rule as CSSStyleRule;
+              if (!styleRule.style) return;
+              for (let i = 0; i < styleRule.style.length; i++) {
+                const prop = styleRule.style[i];
+                const value = styleRule.style.getPropertyValue(prop).trim();
+                if (
+                  prop.startsWith("--") &&
+                  (value.includes("oklab") || value.includes("oklch"))
+                ) {
+                  const rgb = toRgb(value);
+                  if (rgb) varOverrides.push(`${prop}: ${rgb}`);
+                }
+              }
+            });
+          } catch {
+            // cross-origin sheets are inaccessible — skip
+          }
+        });
+
+        if (varOverrides.length > 0) {
+          const overrideStyle = clonedDoc.createElement("style");
+          overrideStyle.textContent = `:root { ${varOverrides.join("; ")} }`;
+          clonedDoc.head.appendChild(overrideStyle);
+        }
+
+        // ── Step 2: Override computed colors on every element ────────────
+        // Map original ↔ clone by position so we can read original computed styles
+        const clonedElements = [
+          clonedRoot,
+          ...Array.from(clonedRoot.querySelectorAll("*")),
+        ] as HTMLElement[];
+
+        originalElements.forEach((origEl, i) => {
+          const cloneEl = clonedElements[i];
+          if (!cloneEl) return;
+          const computed = window.getComputedStyle(origEl);
+          colorProps.forEach((prop) => {
+            const value = computed.getPropertyValue(prop);
+            if (value && (value.includes("oklab") || value.includes("oklch"))) {
+              const rgb = toRgb(value);
+              if (rgb) cloneEl.style.setProperty(prop, rgb, "important");
+            }
+          });
+        });
+      },
     });
   };
 
