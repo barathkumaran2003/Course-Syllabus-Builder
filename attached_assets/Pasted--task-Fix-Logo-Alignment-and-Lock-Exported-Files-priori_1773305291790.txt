@@ -1,0 +1,62 @@
+{
+  "task": "Fix Logo Alignment and Lock Exported Files",
+  "priority": "CRITICAL",
+
+  "warning": "Do NOT modify UI design, fonts, colors, layout structure, components, or features. Only adjust export formatting and logo alignment.",
+
+  "logo_alignment_fix": {
+    "problem": "Logo in exported PDF/DOC is slightly oversized and spacing below logo is too small compared to preview.",
+    "required_solution": [
+      "Reduce logo width slightly.",
+      "Ensure logo remains perfectly center aligned.",
+      "Add spacing below logo before the course title."
+    ],
+    "logo_style_rules": {
+      "max_width": "90px",
+      "display": "block",
+      "margin_left": "auto",
+      "margin_right": "auto",
+      "margin_bottom": "25px"
+    }
+  },
+
+  "export_protection": {
+    "problem": "Exported PDF and DOC currently allow text selection and copy paste.",
+    "required_solution": [
+      "Render the preview page as an image before exporting.",
+      "Generate PDF using image rendering instead of text rendering.",
+      "Convert HTML preview container into canvas.",
+      "Embed rendered image pages into PDF."
+    ],
+    "technical_approach": [
+      "Use html2canvas to render preview container.",
+      "Convert canvas to image.",
+      "Insert image into jsPDF document.",
+      "Export PDF with image pages."
+    ]
+  },
+
+  "doc_export_protection": {
+    "method": [
+      "Convert preview page into image format.",
+      "Embed image inside DOC file instead of editable text.",
+      "Ensure text cannot be selected or copied."
+    ]
+  },
+
+  "strict_constraints": [
+    "Do not modify preview UI.",
+    "Do not change typography.",
+    "Do not change colors.",
+    "Do not change layout spacing except logo margin.",
+    "Do not change features.",
+    "Only adjust logo size and export protection."
+  },
+
+  "expected_result": [
+    "Logo appears smaller and centered exactly like preview.",
+    "Correct spacing below logo before title.",
+    "Exported PDF visually matches preview.",
+    "Exported files do not allow text selection or copy paste."
+  ]
+}
