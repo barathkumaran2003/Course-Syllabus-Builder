@@ -102,12 +102,12 @@ export default function Preview() {
         doc.setTextColor(255, 255, 255);
         doc.text(String(mIndex + 1), badgeX + badgeSize / 2, badgeY + 5, { align: "center" });
 
-        // Module title
+        // Module title (centered)
         doc.setFont("helvetica", "bold");
         doc.setFontSize(14);
         doc.setTextColor(30, 41, 59); // slate-800
         const modTitle = mod.title;
-        doc.text(modTitle, margin + badgeSize + 3, y);
+        doc.text(modTitle, pageW / 2, y, { align: "center" });
         y += 2;
 
         // Underline rule
@@ -129,7 +129,7 @@ export default function Preview() {
             // Bullet dot
             const bulletX = margin + 8;
             const bulletY = y - 1.5;
-            doc.setFillColor(139, 92, 246); // accent violet
+            doc.setFillColor(0, 0, 0); // black
             doc.circle(bulletX, bulletY, 1.2, "F");
 
             // Topic title (bold)
@@ -237,9 +237,10 @@ export default function Preview() {
 
       // Modules
       course.modules.forEach((mod, mIndex) => {
-        // Module heading: "1  Module Title"
+        // Module heading: "1  Module Title" — centered
         children.push(
           new Paragraph({
+            alignment: AlignmentType.CENTER,
             spacing: { before: 400, after: 120 },
             border: {
               bottom: {
@@ -288,7 +289,7 @@ export default function Preview() {
                 spacing: { before: 120, after: 40 },
                 indent: { left: convertInchesToTwip(0.25) },
                 children: [
-                  new TextRun({ text: "• ", size: 22, color: "8B5CF6" }), // accent violet bullet
+                  new TextRun({ text: "• ", size: 22, color: "000000" }), // black bullet
                   new TextRun({
                     text: topic.title,
                     bold: true,
