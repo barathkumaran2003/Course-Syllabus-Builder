@@ -1,0 +1,72 @@
+{
+  "task": "Fix Export Formatting for Brief Notes",
+  "priority": "CRITICAL",
+
+  "warning": "Do NOT modify UI, fonts, layout, colors, spacing, animations, or features. Only adjust export formatting so that brief notes appear correctly.",
+
+  "data_structure_understanding": {
+    "module": "Example: Spring",
+    "topic": "Example: Data JPA",
+    "brief_notes": [
+      "Rowmapper",
+      "Jdbc Template",
+      "Drivermanager Data Source"
+    ]
+  },
+
+  "required_behavior": {
+
+    "header_alignment": [
+      "Logo must remain centered exactly as shown in preview.",
+      "Course title and institute name must use the same alignment and spacing as preview.",
+      "Export must replicate preview header layout exactly."
+    ],
+
+    "topic_rendering": [
+      "Topic bullet must remain violet.",
+      "Topic text color must remain unchanged.",
+      "Topic alignment must remain left aligned exactly as preview."
+    ],
+
+    "brief_notes_rendering": [
+      "Brief notes or description lines must render as bullet points.",
+      "Bullet style must be small.",
+      "Bullet color must be black.",
+      "Text color must remain unchanged.",
+      "Indent brief notes under the topic bullet."
+    ]
+  },
+
+  "visual_structure": {
+    "topic": {
+      "bullet_color": "violet",
+      "alignment": "left"
+    },
+    "brief_notes": {
+      "bullet_color": "black",
+      "alignment": "left",
+      "indentation": "nested under topic"
+    }
+  },
+
+  "export_engine_adjustment": [
+    "Generate export using preview DOM structure.",
+    "Preserve preview typography and spacing.",
+    "Only convert brief notes text lines into bullet list items."
+  ],
+
+  "strict_constraints": [
+    "Do not change UI design.",
+    "Do not change font family or font size.",
+    "Do not change preview layout.",
+    "Do not change color scheme.",
+    "Only adjust how brief notes render in exported documents."
+  ],
+
+  "expected_result": [
+    "Logo alignment identical to preview.",
+    "Header typography identical to preview.",
+    "Topic bullets remain violet.",
+    "Brief notes appear as small black bullet points under each topic."
+  ]
+}

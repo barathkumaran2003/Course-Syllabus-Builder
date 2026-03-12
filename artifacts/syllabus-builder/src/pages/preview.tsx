@@ -141,15 +141,29 @@ export default function Preview() {
             doc.text(topicTitleLines, margin + 13, y);
             y += topicTitleLines.length * 6;
 
-            // Topic notes (regular, gray)
+            // Brief notes — each line as a nested black bullet
             if (topic.notes) {
-              doc.setFont("helvetica", "normal");
-              doc.setFontSize(10);
-              doc.setTextColor(100, 116, 139); // slate-500
-              const notesLines = doc.splitTextToSize(topic.notes, contentW - 16);
-              checkPageBreak(notesLines.length * 5.5 + 3);
-              doc.text(notesLines, margin + 13, y);
-              y += notesLines.length * 5.5 + 5;
+              const noteLines = topic.notes.split("\n").map(l => l.trim()).filter(Boolean);
+              if (noteLines.length > 0) {
+                noteLines.forEach((noteLine) => {
+                  // Small black bullet dot
+                  const nbX = margin + 18;
+                  const nbY = y - 1.2;
+                  doc.setFillColor(30, 41, 59); // slate-800 / black
+                  doc.circle(nbX, nbY, 0.8, "F");
+
+                  doc.setFont("helvetica", "normal");
+                  doc.setFontSize(10);
+                  doc.setTextColor(100, 116, 139); // slate-500
+                  const wrappedNote = doc.splitTextToSize(noteLine, contentW - 26);
+                  checkPageBreak(wrappedNote.length * 5.5 + 2);
+                  doc.text(wrappedNote, margin + 22, y);
+                  y += wrappedNote.length * 5.5 + 1;
+                });
+                y += 4;
+              } else {
+                y += 4;
+              }
             } else {
               y += 4;
             }
@@ -299,21 +313,25 @@ export default function Preview() {
               })
             );
 
-            // Topic notes
+            // Brief notes — each line as a nested black bullet
             if (topic.notes) {
-              children.push(
-                new Paragraph({
-                  spacing: { after: 80 },
-                  indent: { left: convertInchesToTwip(0.45) },
-                  children: [
-                    new TextRun({
-                      text: topic.notes,
-                      size: 20, // 10pt
-                      color: "64748B", // slate-500
-                    }),
-                  ],
-                })
-              );
+              const noteLines = topic.notes.split("\n").map((l: string) => l.trim()).filter(Boolean);
+              noteLines.forEach((noteLine: string) => {
+                children.push(
+                  new Paragraph({
+                    spacing: { before: 40, after: 40 },
+                    indent: { left: convertInchesToTwip(0.45) },
+                    children: [
+                      new TextRun({ text: "◦ ", size: 18, color: "1E293B" }),
+                      new TextRun({
+                        text: noteLine,
+                        size: 20,
+                        color: "64748B",
+                      }),
+                    ],
+                  })
+                );
+              });
             }
           });
         }
